@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface SalaRepository extends JpaRepository<Sala, UUID> {
+    boolean existsByNome(String nome);
 }
