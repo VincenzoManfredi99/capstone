@@ -63,7 +63,7 @@ public class HotspotService {
         return this.hotspotRepository.findAll(pageable);
     }
 
-    //Find by id
+    //Find by Id
     public Hotspot findById(UUID id) {
         return this.hotspotRepository.findById(id).orElseThrow(() -> new NotFound("L'hotspot con questo id non è stato trovato"));
     }
