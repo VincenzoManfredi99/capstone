@@ -62,12 +62,12 @@ public class HotspotController {
         return this.hotspotService.findByIdAndUpdate(id, body);
     }
 
-        //Delete
-        @DeleteMapping("/{id}")
-        @ResponseStatus(HttpStatus.NO_CONTENT)
-        public void getByIdAndDelete(@PathVariable UUID id) {
-            this.hotspotService.findByIdAndDelete(id);
-        }
-
+    //Delete
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void getByIdAndDelete(@PathVariable UUID id) {
+        this.hotspotService.findByIdAndDelete(id);
     }
+
 }
+
