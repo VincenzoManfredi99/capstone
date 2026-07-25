@@ -68,6 +68,5 @@ public class HotspotController {
     public void getByIdAndDelete(@PathVariable UUID id) {
         this.hotspotService.findByIdAndDelete(id);
     }
-
 }
 
