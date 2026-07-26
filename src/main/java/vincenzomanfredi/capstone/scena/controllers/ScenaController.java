@@ -16,14 +16,12 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/scena")
+@RequestMapping("/scene")
 public class ScenaController {
     private final ScenaService scenaService;
-    private final SalaService salaService;
 
     public ScenaController(ScenaService scenaService, SalaService salaService) {
         this.scenaService = scenaService;
-        this.salaService = salaService;
     }
 
     //Post

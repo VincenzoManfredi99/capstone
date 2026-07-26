@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import vincenzomanfredi.capstone.exceptions.NotFound;
 import vincenzomanfredi.capstone.sala.entities.Sala;
-import vincenzomanfredi.capstone.sala.repositories.SalaRepository;
+import vincenzomanfredi.capstone.sala.services.SalaService;
 import vincenzomanfredi.capstone.scena.entities.Scena;
 import vincenzomanfredi.capstone.scena.payloads.ScenaDTO;
 import vincenzomanfredi.capstone.scena.repositories.ScenaRepository;
@@ -19,19 +19,19 @@ import java.util.UUID;
 @Slf4j
 public class ScenaService {
     private final ScenaRepository scenaRepository;
-    private final SalaRepository salaRepository;
+    private final SalaService salaService;
 
-    public ScenaService(ScenaRepository scenaRepository, SalaRepository salaRepository) {
+    public ScenaService(ScenaRepository scenaRepository, SalaService salaService) {
         this.scenaRepository = scenaRepository;
-        this.salaRepository = salaRepository;
+        this.salaService = salaService;
     }
 
     //Save
     public Scena save(ScenaDTO payload) {
-        Sala sala = this.salaRepository.findById(payload.salaId()).orElseThrow(() -> new NotFound("Sala con id" + payload.salaId() + " non trovata"));
+        Sala sala = this.salaService.findById(payload.salaId());
 
         Scena newScena = new Scena(
-                payload.foto(),
+                payload.foto360(),
                 sala
         );
 
@@ -59,9 +59,9 @@ public class ScenaService {
     public Scena findByIdAndUpdate(UUID id, ScenaDTO payload) {
         Scena found = this.findById(id);
 
-        Sala nuovaSala = this.salaRepository.findById(payload.salaId()).orElseThrow(() -> new NotFound("Sala con id " + payload.salaId() + " non trovata!"));
+        Sala nuovaSala = this.salaService.findById(payload.salaId());
 
-        found.setFoto(payload.foto());
+        found.setFoto360(payload.foto360());
         found.setSala(nuovaSala);
 
         Scena updated = this.scenaRepository.save(found);

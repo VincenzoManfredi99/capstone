@@ -17,6 +17,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/sala")
 public class SalaController {
+
     private final SalaService salaService;
 
     public SalaController(SalaService salaService) {

@@ -8,6 +8,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import vincenzomanfredi.capstone.exceptions.BadRequest;
 import vincenzomanfredi.capstone.exceptions.NotFound;
+import vincenzomanfredi.capstone.museo.entities.Museo;
+import vincenzomanfredi.capstone.museo.services.MuseoService;
 import vincenzomanfredi.capstone.sala.entities.Sala;
 import vincenzomanfredi.capstone.sala.payloads.SalaDTO;
 import vincenzomanfredi.capstone.sala.repositories.SalaRepository;
@@ -19,9 +21,11 @@ import java.util.UUID;
 public class SalaService {
 
     private final SalaRepository salaRepository;
+    private final MuseoService museoService;
 
-    public SalaService(SalaRepository salaRepository) {
+    public SalaService(SalaRepository salaRepository, MuseoService museoService) {
         this.salaRepository = salaRepository;
+        this.museoService = museoService;
     }
 
     //Save
@@ -30,9 +34,13 @@ public class SalaService {
             throw new BadRequest("Questo nome è già in uso");
         }
 
+        Museo museo = this.museoService.findById(payload.museoId());
+
         Sala newSala = new Sala(
+                museo,
                 payload.nome(),
-                payload.descrizione()
+                payload.descrizione(),
+                payload.ordine()
         );
 
         Sala saved = this.salaRepository.save(newSala);
@@ -58,9 +66,12 @@ public class SalaService {
     //Update
     public Sala findByIdAndUpdate(UUID id, SalaDTO payload) {
         Sala found = this.findById(id);
+        Museo museo = this.museoService.findById(payload.museoId());
 
         found.setNome(payload.nome());
         found.setDescrizione(payload.descrizione());
+        found.setMuseo(museo);
+        found.setOrdine(payload.ordine());
 
         Sala updated = this.salaRepository.save(found);
         log.info("Sala con id " + id + " aggiornata con successo");
