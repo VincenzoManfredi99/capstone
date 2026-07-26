@@ -66,5 +66,4 @@ public class ScenaController {
     public void getByIdAndDelete(@PathVariable UUID id) {
         this.scenaService.findByIdAndDelete(id);
     }
-
 }

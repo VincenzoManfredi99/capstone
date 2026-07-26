@@ -39,13 +39,9 @@ public class HotspotService {
                 payload.tipo(),
                 payload.pitch(),
                 payload.yaw(),
-                scena,
-                payload.titolo(),
-                payload.descrizione(),
-                payload.immagine(),
-                payload.file3D(),
-                payload.audio(),
-                targetScena
+                targetScena,
+                scena
+
         );
 
         Hotspot saved = this.hotspotRepository.save(newHotspot);
@@ -81,13 +77,9 @@ public class HotspotService {
         found.setTipo(payload.tipo());
         found.setPitch(payload.pitch());
         found.setYaw(payload.yaw());
+        found.setTargetScena(targetScena);
         found.setScena(newScena);
-        found.setTitolo(payload.titolo());
-        found.setDescrizione(payload.descrizione());
-        found.setImmagine(payload.immagine());
-        found.setFile3D(payload.file3D());
-        found.setAudio(payload.audio());
-        found.setTargetScenaId(targetScena);
+
 
         Hotspot updated = this.hotspotRepository.save(found);
         log.info("Hotspot con id " + id + " aggiornata con successo");

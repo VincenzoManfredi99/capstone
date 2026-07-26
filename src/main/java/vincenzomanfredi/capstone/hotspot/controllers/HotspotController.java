@@ -10,7 +10,6 @@ import vincenzomanfredi.capstone.hotspot.entities.Hotspot;
 import vincenzomanfredi.capstone.hotspot.payloads.HotspotDTO;
 import vincenzomanfredi.capstone.hotspot.payloads.HotspotResponseDTO;
 import vincenzomanfredi.capstone.hotspot.services.HotspotService;
-import vincenzomanfredi.capstone.scena.services.ScenaService;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,11 +18,9 @@ import java.util.UUID;
 @RequestMapping("/hotspot")
 public class HotspotController {
     private final HotspotService hotspotService;
-    private final ScenaService scenaService;
 
-    public HotspotController(HotspotService hotspotService, ScenaService scenaService) {
+    public HotspotController(HotspotService hotspotService) {
         this.hotspotService = hotspotService;
-        this.scenaService = scenaService;
     }
 
     //Post
