@@ -51,15 +51,11 @@ public class Admin {
     @Column(name = "updated_by")
     private UUID updatedBy;
 
-    public Admin(String nome, String cognome, String email, String password, Ruolo ruolo, LocalDateTime createdAt, UUID createdBy, LocalDateTime updatedAt, UUID updatedBy) {
+    public Admin(String nome, String cognome, String email, String password, Ruolo ruolo) {
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
         this.password = password;
         this.ruolo = ruolo;
-        this.createdAt = createdAt;
-        this.createdBy = createdBy;
-        this.updatedAt = updatedAt;
-        this.updatedBy = updatedBy;
     }
 }

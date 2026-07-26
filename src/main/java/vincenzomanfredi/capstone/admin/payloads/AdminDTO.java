@@ -2,7 +2,10 @@ package vincenzomanfredi.capstone.admin.payloads;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import java.util.UUID;
 
 public record AdminDTO(
         @NotBlank(message = "Il nome è obbligatorio")
@@ -19,6 +22,9 @@ public record AdminDTO(
 
         @NotBlank(message = "La password è obbligatoria")
         @Size(min = 6, message = "La password deve essere di almeno 6 caratteri")
-        String password
+        String password,
+
+        @NotNull(message = "L'ID del ruolo è obbligatorio")
+        UUID ruoloId
 ) {
 }

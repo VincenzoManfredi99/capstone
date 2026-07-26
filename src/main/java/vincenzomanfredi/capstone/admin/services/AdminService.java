@@ -11,6 +11,8 @@ import vincenzomanfredi.capstone.admin.payloads.AdminDTO;
 import vincenzomanfredi.capstone.admin.repositories.AdminRepository;
 import vincenzomanfredi.capstone.exceptions.BadRequest;
 import vincenzomanfredi.capstone.exceptions.NotFound;
+import vincenzomanfredi.capstone.ruolo.entities.Ruolo;
+import vincenzomanfredi.capstone.ruolo.services.RuoloService;
 
 import java.util.UUID;
 
@@ -18,9 +20,11 @@ import java.util.UUID;
 @Slf4j
 public class AdminService {
     private final AdminRepository adminRepository;
+    private final RuoloService ruoloService;
 
-    public AdminService(AdminRepository adminRepository) {
+    public AdminService(AdminRepository adminRepository, RuoloService ruoloService) {
         this.adminRepository = adminRepository;
+        this.ruoloService = ruoloService;
     }
 
 
@@ -30,11 +34,14 @@ public class AdminService {
             throw new BadRequest("L'email " + payload.email() + " è già in uso!");
         });
 
+        Ruolo ruolo = this.ruoloService.findById(payload.ruoloId());
+
         Admin newAdmin = new Admin(
                 payload.nome(),
                 payload.cognome(),
                 payload.email(),
-                payload.password()
+                payload.password(),
+                ruolo
         );
 
         return this.adminRepository.save(newAdmin);
@@ -55,7 +62,6 @@ public class AdminService {
         return this.adminRepository.findById(id).orElseThrow(() -> new NotFound("Admin con id " + id + " non trovato!"));
     }
 
-
     //Update
     public Admin findByIdAndUpdate(UUID id, AdminDTO payload) {
         Admin found = this.findById(id);
@@ -66,10 +72,13 @@ public class AdminService {
             });
         }
 
+        Ruolo ruolo = this.ruoloService.findById(payload.ruoloId());
+
         found.setNome(payload.nome());
         found.setCognome(payload.cognome());
         found.setEmail(payload.email());
         found.setPassword(payload.password());
+        found.setRuolo(ruolo);
 
         return this.adminRepository.save(found);
     }
