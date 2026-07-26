@@ -23,6 +23,7 @@ public class AssetController {
         this.assetService = assetService;
     }
 
+    //Post
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AssetResponseDTO saveAsset(@RequestBody @Validated AssetDTO body, BindingResult validationResult) {
@@ -36,6 +37,7 @@ public class AssetController {
         );
     }
 
+    //Get All
     @GetMapping
     public Page<Asset> getAssets(@RequestParam(defaultValue = "0") int page,
                                  @RequestParam(defaultValue = "10") int size,
@@ -43,11 +45,13 @@ public class AssetController {
         return this.assetService.getAll(page, size, orderBy);
     }
 
+    //Get by id
     @GetMapping("/{id}")
     public Asset getById(@PathVariable UUID id) {
         return this.assetService.findById(id);
     }
 
+    //Update
     @PutMapping("/{id}")
     public Asset getByIdAndUpdate(@PathVariable UUID id, @RequestBody @Validated AssetDTO body, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
@@ -57,6 +61,7 @@ public class AssetController {
         return this.assetService.findByIdAndUpdate(id, body);
     }
 
+    //Delete
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void getByIdAndDelete(@PathVariable UUID id) {

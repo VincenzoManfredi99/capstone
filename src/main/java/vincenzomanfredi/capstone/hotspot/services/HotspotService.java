@@ -11,7 +11,7 @@ import vincenzomanfredi.capstone.hotspot.entities.Hotspot;
 import vincenzomanfredi.capstone.hotspot.payloads.HotspotDTO;
 import vincenzomanfredi.capstone.hotspot.repositories.HotspotRepository;
 import vincenzomanfredi.capstone.scena.entities.Scena;
-import vincenzomanfredi.capstone.scena.repositories.ScenaRepository;
+import vincenzomanfredi.capstone.scena.services.ScenaService;
 
 import java.util.UUID;
 
@@ -19,20 +19,20 @@ import java.util.UUID;
 @Slf4j
 public class HotspotService {
     private final HotspotRepository hotspotRepository;
-    private final ScenaRepository scenaRepository;
+    private final ScenaService scenaService;
 
-    public HotspotService(HotspotRepository hotspotRepository, ScenaRepository scenaRepository) {
+    public HotspotService(HotspotRepository hotspotRepository, ScenaService scenaService) {
         this.hotspotRepository = hotspotRepository;
-        this.scenaRepository = scenaRepository;
+        this.scenaService = scenaService;
     }
 
     //Save
     public Hotspot save(HotspotDTO payload) {
-        Scena scena = this.scenaRepository.findById(payload.scenaId()).orElseThrow(() -> new NotFound("Hotspot con id" + payload.scenaId() + " non trovata"));
+        Scena scena = this.scenaService.findById(payload.scenaId());
 
         Scena targetScena = null;
         if (payload.targetScenaId() != null) {
-            targetScena = this.scenaRepository.findById(payload.targetScenaId()).orElseThrow(() -> new NotFound("Scena target con id " + payload.targetScenaId() + " non trovata"));
+            targetScena = this.scenaService.findById(payload.targetScenaId());
         }
 
         Hotspot newHotspot = new Hotspot(
@@ -68,10 +68,10 @@ public class HotspotService {
     public Hotspot findByIdAndUpdate(UUID id, HotspotDTO payload) {
         Hotspot found = this.findById(id);
 
-        Scena newScena = this.scenaRepository.findById(payload.scenaId()).orElseThrow(() -> new NotFound("Scena con id " + payload.scenaId() + " non trovata!"));
+        Scena newScena = this.scenaService.findById(payload.scenaId());
         Scena targetScena = null;
         if (payload.targetScenaId() != null) {
-            targetScena = this.scenaRepository.findById(payload.targetScenaId()).orElseThrow(() -> new NotFound("Scena target con id " + payload.targetScenaId() + " non trovata"));
+            targetScena = this.scenaService.findById(payload.targetScenaId());
         }
 
         found.setTipo(payload.tipo());
