@@ -1,0 +1,82 @@
+package vincenzomanfredi.capstone.opera.services;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import vincenzomanfredi.capstone.exceptions.NotFound;
+import vincenzomanfredi.capstone.hotspot.entities.Hotspot;
+import vincenzomanfredi.capstone.hotspot.repositories.HotspotRepository;
+import vincenzomanfredi.capstone.opera.entities.Opera;
+import vincenzomanfredi.capstone.opera.payloads.OperaDTO;
+import vincenzomanfredi.capstone.opera.repositories.OperaRepository;
+
+import java.util.UUID;
+
+@Service
+@Slf4j
+public class OperaService {
+    private final OperaRepository operaRepository;
+    private final HotspotRepository hotspotRepository;
+
+    public OperaService(OperaRepository operaRepository, HotspotRepository hotspotRepository) {
+        this.operaRepository = operaRepository;
+        this.hotspotRepository = hotspotRepository;
+    }
+
+    //Save
+    public Opera save(OperaDTO payload) {
+        Hotspot hotspot = this.hotspotRepository.findById(payload.hotspotId()).orElseThrow(() -> new NotFound("Hotspot con id " + payload.hotspotId() + " non trovato!"));
+
+        Opera newOpera = new Opera(
+                payload.titolo(),
+                payload.descrizione(),
+                payload.url_audio(),
+                hotspot
+        );
+        Opera saved = this.operaRepository.save(newOpera);
+        log.info("Opera con id " + saved.getId() + " salvata con successo");
+        return saved;
+    }
+
+    //Get All
+    public Page<Opera> getAll(int page, int size, String orderBy) {
+        if (size > 50) size = 50;
+        if (size < 0) size = 10;
+        if (page < 0) page = 0;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(orderBy));
+        return this.operaRepository.findAll(pageable);
+    }
+
+    //Find by id
+    public Opera findById(UUID id) {
+        return this.operaRepository.findById(id)
+                .orElseThrow(() -> new NotFound("L'opera con id " + id + " non è stata trovata!"));
+    }
+
+    //Update
+    public Opera findByIdAndUpdate(UUID id, OperaDTO payload) {
+        Opera found = this.findById(id);
+        Hotspot newHotspot = this.hotspotRepository.findById(payload.hotspotId()).orElseThrow(() -> new NotFound("Hotspot con id " + payload.hotspotId() + " non trovato!"));
+
+        found.setTitolo(payload.titolo());
+        found.setDescrizione(payload.descrizione());
+        found.setUrl_audio(payload.url_audio());
+        found.setHotspot(newHotspot);
+
+        Opera updated = this.operaRepository.save(found);
+        log.info("Opera con id " + id + " aggiornata con successo!");
+        return updated;
+    }
+
+    //Delete
+    public void findByIdAndDelete(UUID id) {
+        Opera found = this.findById(id);
+        this.operaRepository.delete(found);
+        log.info("Opera con id " + id + " eliminata con successo!");
+    }
+
+}
