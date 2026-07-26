@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import vincenzomanfredi.capstone.exceptions.NotFound;
 import vincenzomanfredi.capstone.hotspot.entities.Hotspot;
-import vincenzomanfredi.capstone.hotspot.repositories.HotspotRepository;
+import vincenzomanfredi.capstone.hotspot.services.HotspotService;
 import vincenzomanfredi.capstone.opera.entities.Opera;
 import vincenzomanfredi.capstone.opera.payloads.OperaDTO;
 import vincenzomanfredi.capstone.opera.repositories.OperaRepository;
@@ -19,16 +19,16 @@ import java.util.UUID;
 @Slf4j
 public class OperaService {
     private final OperaRepository operaRepository;
-    private final HotspotRepository hotspotRepository;
+    private final HotspotService hotspotService;
 
-    public OperaService(OperaRepository operaRepository, HotspotRepository hotspotRepository) {
+    public OperaService(OperaRepository operaRepository, HotspotService hotspotService) {
         this.operaRepository = operaRepository;
-        this.hotspotRepository = hotspotRepository;
+        this.hotspotService = hotspotService;
     }
 
     //Save
     public Opera save(OperaDTO payload) {
-        Hotspot hotspot = this.hotspotRepository.findById(payload.hotspotId()).orElseThrow(() -> new NotFound("Hotspot con id " + payload.hotspotId() + " non trovato!"));
+        Hotspot hotspot = this.hotspotService.findById(payload.hotspotId());
 
         Opera newOpera = new Opera(
                 payload.titolo(),
@@ -60,7 +60,7 @@ public class OperaService {
     //Update
     public Opera findByIdAndUpdate(UUID id, OperaDTO payload) {
         Opera found = this.findById(id);
-        Hotspot newHotspot = this.hotspotRepository.findById(payload.hotspotId()).orElseThrow(() -> new NotFound("Hotspot con id " + payload.hotspotId() + " non trovato!"));
+        Hotspot newHotspot = this.hotspotService.findById(payload.hotspotId());
 
         found.setTitolo(payload.titolo());
         found.setDescrizione(payload.descrizione());
