@@ -57,9 +57,14 @@ public class AdminService {
         return this.adminRepository.findAll(pageable);
     }
 
-    //Get By Id
+    //Get By id
     public Admin findById(UUID id) {
         return this.adminRepository.findById(id).orElseThrow(() -> new NotFound("Admin con id " + id + " non trovato!"));
+    }
+
+    //Find by email
+    public Admin findByEmail(String email) {
+        return this.adminRepository.findByEmail(email).orElseThrow(() -> new NotFound("Admin con questa email " + email + " non trovata"));
     }
 
     //Update
@@ -88,4 +93,6 @@ public class AdminService {
         Admin found = this.findById(id);
         this.adminRepository.delete(found);
     }
+
+
 }

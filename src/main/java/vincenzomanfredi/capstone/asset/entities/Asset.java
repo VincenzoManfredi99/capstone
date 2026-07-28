@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "asset")
+@Table(name = "assets")
 @Setter
 @Getter
 @NoArgsConstructor
@@ -28,7 +28,7 @@ public class Asset {
     @JoinColumn(nullable = false, name = "opera_id")
     private Opera opera;
 
-    @@Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipo_url", nullable = false)
     private TipoUrl tipoUrl;
 
