@@ -23,7 +23,6 @@ public class AuthService {
 
         if (found.getPassword().equals(body.password())) {
             return this.jwtTools.generateToken(found);
-            return "TOKEN";
         } else {
             throw new Unauthorized("Credenziali sbagliate");
         }
