@@ -5,6 +5,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import vincenzomanfredi.capstone.admin.entities.Admin;
+import vincenzomanfredi.capstone.exceptions.Unauthorized;
 
 import java.util.Date;
 
@@ -25,6 +26,11 @@ public class JWTTools {
                 .compact();
     }
 
-    public void verifyToken() {
+    public void verifyToken(String token) {
+        try {
+            Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes())).build().parse(token);
+        } catch (Exception ex) {
+            throw new Unauthorized("Ci sono stati problemi con il token! Rieffettuare login!");
+        }
     }
 }
