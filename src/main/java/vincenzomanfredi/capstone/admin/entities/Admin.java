@@ -4,9 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import vincenzomanfredi.capstone.ruolo.entities.Ruolo;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -15,7 +20,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @ToString
-public class Admin {
+public class Admin implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Setter(AccessLevel.NONE)
@@ -57,5 +62,19 @@ public class Admin {
         this.email = email;
         this.password = password;
         this.ruolo = ruolo;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Il metodo mi impone di restituire una Collection di Authorities cioè di RUOLI (al plurale perché in altre applicazioni
+        // potrebbe anche succedere che un utente abbia più di un ruolo)
+        // SimpleGrantedAuthority è una classe che implementa GrantedAuthority, cioè l'interfaccia "ufficiale" per i ruoli in Spring Security
+        // a noi quindi basta passare il nostro enum al suo costruttore e metterlo nella lista
+        return List.of(new SimpleGrantedAuthority(this.ruolo.getDescrizione()));
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
     }
 }

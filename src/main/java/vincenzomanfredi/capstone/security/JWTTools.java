@@ -8,6 +8,7 @@ import vincenzomanfredi.capstone.admin.entities.Admin;
 import vincenzomanfredi.capstone.exceptions.Unauthorized;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class JWTTools {
@@ -33,4 +34,13 @@ public class JWTTools {
             throw new Unauthorized("Ci sono stati problemi con il token! Rieffettuare login!");
         }
     }
+
+    public UUID extractIdFromToken(String token) {
+        return UUID.fromString(Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes())).build()
+                .parseSignedClaims(token).getPayload().getSubject());
+    }
 }
+
+
+
+

@@ -4,20 +4,28 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
+import vincenzomanfredi.capstone.admin.entities.Admin;
+import vincenzomanfredi.capstone.admin.services.AdminService;
 import vincenzomanfredi.capstone.exceptions.Unauthorized;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Component
 public class TokenFilter extends OncePerRequestFilter {
 
     private final JWTTools jwtTools;
+    private final AdminService adminService;
 
-    public TokenFilter(JWTTools jwtTools) {
+    public TokenFilter(JWTTools jwtTools, AdminService adminService) {
         this.jwtTools = jwtTools;
+        this.adminService = adminService;
     }
 
     @Override
@@ -31,6 +39,12 @@ public class TokenFilter extends OncePerRequestFilter {
         System.out.println(accessToken);
 
         this.jwtTools.verifyToken(accessToken);
+
+        UUID userId = this.jwtTools.extractIdFromToken(accessToken);
+        Admin authenticatedUser = this.adminService.findById(userId);
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(authenticatedUser, null, authenticatedUser.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         filterChain.doFilter(request, response);
     }
