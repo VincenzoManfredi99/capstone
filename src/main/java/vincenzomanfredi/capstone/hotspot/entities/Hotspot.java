@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import vincenzomanfredi.capstone.scena.entities.Scena;
 
 import java.time.LocalDateTime;
@@ -13,6 +16,7 @@ import java.util.UUID;
 @Table
 @Setter
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @ToString
 public class Hotspot {
@@ -43,13 +47,16 @@ public class Hotspot {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "created_by")
+    
+    @CreatedBy
+    @Column(name = "created_by", updatable = false)
     private UUID createdBy;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @LastModifiedBy
     @Column(name = "updated_by")
     private UUID updatedBy;
 

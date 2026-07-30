@@ -24,6 +24,9 @@ public class AuthService {
     public String check(LoginDTO body) {
         Admin found = this.adminService.findByEmail(body.email());
 
+        System.out.println("Password ricevuta: " + body.password());
+        System.out.println("Password nel DB: " + found.getPassword());
+
         if (this.bcrypt.matches(body.password(), found.getPassword())) {
             return this.jwtTools.generateToken(found);
         } else {

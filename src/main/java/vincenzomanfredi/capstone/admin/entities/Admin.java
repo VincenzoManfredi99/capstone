@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +21,7 @@ import java.util.UUID;
 @Table
 @Getter
 @Setter
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @ToString
 public class Admin implements UserDetails {
@@ -46,6 +50,7 @@ public class Admin implements UserDetails {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @CreatedBy
     @Column(name = "created_by")
     private UUID createdBy;
 
@@ -53,6 +58,7 @@ public class Admin implements UserDetails {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @LastModifiedBy
     @Column(name = "updated_by")
     private UUID updatedBy;
 
@@ -66,10 +72,6 @@ public class Admin implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Il metodo mi impone di restituire una Collection di Authorities cioè di RUOLI (al plurale perché in altre applicazioni
-        // potrebbe anche succedere che un utente abbia più di un ruolo)
-        // SimpleGrantedAuthority è una classe che implementa GrantedAuthority, cioè l'interfaccia "ufficiale" per i ruoli in Spring Security
-        // a noi quindi basta passare il nostro enum al suo costruttore e metterlo nella lista
         return List.of(new SimpleGrantedAuthority(this.ruolo.getDescrizione()));
     }
 
