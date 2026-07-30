@@ -6,8 +6,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import vincenzomanfredi.capstone.exceptions.BadRequest;
 import vincenzomanfredi.capstone.exceptions.NotFound;
 import vincenzomanfredi.capstone.hotspot.entities.Hotspot;
+import vincenzomanfredi.capstone.hotspot.entities.Tipo;
 import vincenzomanfredi.capstone.hotspot.payloads.HotspotDTO;
 import vincenzomanfredi.capstone.hotspot.repositories.HotspotRepository;
 import vincenzomanfredi.capstone.scena.entities.Scena;
@@ -31,7 +33,17 @@ public class HotspotService {
         Scena scena = this.scenaService.findById(payload.scenaId());
 
         Scena targetScena = null;
-        if (payload.targetScenaId() != null) {
+
+        if (payload.tipo() == Tipo.OPERA) {
+            targetScena = null;
+        } else if (payload.tipo() == Tipo.MOVIMENTO) {
+            if (payload.targetScenaId() == null) {
+                throw new BadRequest("Per gli hotspot di tipo MOVIMENTO è obbligatorio specificare una scena di target.");
+            }
+
+            if (payload.targetScenaId().equals(payload.scenaId())) {
+                throw new BadRequest("La scena target non può essere uguale alla scena corrente.");
+            }
             targetScena = this.scenaService.findById(payload.targetScenaId());
         }
 
@@ -41,7 +53,6 @@ public class HotspotService {
                 payload.yaw(),
                 targetScena,
                 scena
-
         );
 
         Hotspot saved = this.hotspotRepository.save(newHotspot);
