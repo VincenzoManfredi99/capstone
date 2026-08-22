@@ -6,12 +6,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import vincenzomanfredi.capstone.admin.entities.Admin;
-import vincenzomanfredi.capstone.admin.services.AdminService;
 import vincenzomanfredi.capstone.exceptions.NotFound;
 import vincenzomanfredi.capstone.museo.entities.Museo;
 import vincenzomanfredi.capstone.museo.payloads.MuseoDTO;
 import vincenzomanfredi.capstone.museo.repositories.MuseoRepository;
+import vincenzomanfredi.capstone.utente.entities.Utente;
+import vincenzomanfredi.capstone.utente.services.UtenteService;
 
 import java.util.UUID;
 
@@ -19,16 +19,16 @@ import java.util.UUID;
 @Slf4j
 public class MuseoService {
     private final MuseoRepository museoRepository;
-    private final AdminService adminService;
+    private final UtenteService utenteService;
 
-    public MuseoService(MuseoRepository museoRepository, AdminService adminService) {
+    public MuseoService(MuseoRepository museoRepository, UtenteService utenteService) {
         this.museoRepository = museoRepository;
-        this.adminService = adminService;
+        this.utenteService = utenteService;
     }
 
     //Save
     public Museo save(MuseoDTO payload) {
-        Admin utente = this.adminService.findById(payload.utenteId());
+        Utente utente = this.utenteService.findById(payload.utenteId());
 
         Museo newMuseo = new Museo(
                 payload.denominazione(),
@@ -61,7 +61,7 @@ public class MuseoService {
     //Update
     public Museo findByIdAndUpdate(UUID id, MuseoDTO payload) {
         Museo found = this.findById(id);
-        Admin utente = this.adminService.findById(payload.utenteId());
+        Utente utente = this.utenteService.findById(payload.utenteId());
 
         found.setDenominazione(payload.denominazione());
         found.setIndirizzo(payload.indirizzo());

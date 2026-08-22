@@ -2,27 +2,27 @@ package vincenzomanfredi.capstone.security;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import vincenzomanfredi.capstone.admin.entities.Admin;
-import vincenzomanfredi.capstone.admin.services.AdminService;
 import vincenzomanfredi.capstone.exceptions.Unauthorized;
 import vincenzomanfredi.capstone.security.login.LoginDTO;
+import vincenzomanfredi.capstone.utente.entities.Utente;
+import vincenzomanfredi.capstone.utente.services.UtenteService;
 
 @Service
 public class AuthService {
 
-    private final AdminService adminService;
+    private final UtenteService utenteService;
     private final JWTTools jwtTools;
     private final PasswordEncoder bcrypt;
 
 
-    public AuthService(AdminService adminService, JWTTools jwtTools, PasswordEncoder bcrypt) {
-        this.adminService = adminService;
+    public AuthService(UtenteService utenteService, JWTTools jwtTools, PasswordEncoder bcrypt) {
+        this.utenteService = utenteService;
         this.jwtTools = jwtTools;
         this.bcrypt = bcrypt;
     }
 
     public String check(LoginDTO body) {
-        Admin found = this.adminService.findByEmail(body.email());
+        Utente found = this.utenteService.findByEmail(body.email());
 
         System.out.println("Password ricevuta: " + body.password());
         System.out.println("Password nel DB: " + found.getPassword());

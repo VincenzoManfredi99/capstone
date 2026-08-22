@@ -5,7 +5,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import vincenzomanfredi.capstone.admin.entities.Admin;
+import vincenzomanfredi.capstone.utente.entities.Utente;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -21,7 +21,7 @@ public class SpringSecurityAuditorAware implements AuditorAware<UUID> {
             return Optional.empty();
         }
 
-        Admin currentAdmin = (Admin) authentication.getPrincipal();
-        return Optional.of(currentAdmin.getId());
+        Utente currentUtente = (Utente) authentication.getPrincipal();
+        return Optional.of(currentUtente.getId());
     }
 }

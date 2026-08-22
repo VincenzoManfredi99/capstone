@@ -1,4 +1,4 @@
-package vincenzomanfredi.capstone.admin.entities;
+package vincenzomanfredi.capstone.utente.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,7 +10,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import vincenzomanfredi.capstone.ruolo.entities.Ruolo;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -18,13 +17,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table
+@Table(name = "utente")
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @ToString
-public class Admin implements UserDetails {
+public class Utente implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Setter(AccessLevel.NONE)
@@ -42,9 +41,8 @@ public class Admin implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @ManyToOne
-    @JoinColumn(name = "ruolo_id", nullable = false)
-    private Ruolo ruolo;
+    @Enumerated(EnumType.STRING)
+    private UtenteRuolo utenteRuolo;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -62,17 +60,17 @@ public class Admin implements UserDetails {
     @Column(name = "updated_by")
     private UUID updatedBy;
 
-    public Admin(String nome, String cognome, String email, String password, Ruolo ruolo) {
+    public Utente(String nome, String cognome, String email, String password) {
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
         this.password = password;
-        this.ruolo = ruolo;
+        this.utenteRuolo = UtenteRuolo.ADMIN;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(this.ruolo.getDescrizione()));
+        return List.of(new SimpleGrantedAuthority(this.utenteRuolo.name()));
     }
 
     @Override

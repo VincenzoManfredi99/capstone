@@ -10,9 +10,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
-import vincenzomanfredi.capstone.admin.entities.Admin;
-import vincenzomanfredi.capstone.admin.services.AdminService;
 import vincenzomanfredi.capstone.exceptions.Unauthorized;
+import vincenzomanfredi.capstone.utente.entities.Utente;
+import vincenzomanfredi.capstone.utente.services.UtenteService;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -21,11 +21,11 @@ import java.util.UUID;
 public class TokenFilter extends OncePerRequestFilter {
 
     private final JWTTools jwtTools;
-    private final AdminService adminService;
+    private final UtenteService utenteService;
 
-    public TokenFilter(JWTTools jwtTools, AdminService adminService) {
+    public TokenFilter(JWTTools jwtTools, UtenteService utenteService) {
         this.jwtTools = jwtTools;
-        this.adminService = adminService;
+        this.utenteService = utenteService;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class TokenFilter extends OncePerRequestFilter {
         this.jwtTools.verifyToken(accessToken);
 
         UUID userId = this.jwtTools.extractIdFromToken(accessToken);
-        Admin authenticatedUser = this.adminService.findById(userId);
+        Utente authenticatedUser = this.utenteService.findById(userId);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(authenticatedUser, null, authenticatedUser.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);

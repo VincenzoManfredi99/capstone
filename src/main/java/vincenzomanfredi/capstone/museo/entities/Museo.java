@@ -10,7 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import vincenzomanfredi.capstone.admin.entities.Admin;
+import vincenzomanfredi.capstone.utente.entities.Utente;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -44,7 +44,7 @@ public class Museo {
 
     @ManyToOne
     @JoinColumn(name = "utente_id")
-    private Admin utente;
+    private Utente utente;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -65,7 +65,7 @@ public class Museo {
     @Column(name = "accesso_museo")
     private String accessoMuseo;
 
-    public Museo(String denominazione, String indirizzo, String citta, String provincia, int cap, Admin utente, String accessoMuseo) {
+    public Museo(String denominazione, String indirizzo, String citta, String provincia, int cap, Utente utente, String accessoMuseo) {
         this.denominazione = denominazione;
         this.indirizzo = indirizzo;
         this.citta = citta;

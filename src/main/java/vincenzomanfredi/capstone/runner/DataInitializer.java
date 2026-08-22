@@ -4,33 +4,24 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import vincenzomanfredi.capstone.admin.entities.Admin;
-import vincenzomanfredi.capstone.admin.repositories.AdminRepository;
-import vincenzomanfredi.capstone.ruolo.entities.Ruolo;
-import vincenzomanfredi.capstone.ruolo.repositories.RuoloRepository;
+import vincenzomanfredi.capstone.utente.entities.Utente;
+import vincenzomanfredi.capstone.utente.repositories.UtenteRepository;
 
 @Configuration
 public class DataInitializer {
 
     @Bean
-    CommandLineRunner initDatabase(RuoloRepository ruoloRepository,
-                                   AdminRepository adminRepository,
+    CommandLineRunner initDatabase(UtenteRepository utenteRepository,
                                    PasswordEncoder passwordEncoder) {
         return args -> {
-            // 1. Controlla e crea il ruolo se non esiste
-            Ruolo ruoloAdmin = ruoloRepository.findByDescrizione("ADMIN")
-                    .orElseGet(() -> ruoloRepository.save(new Ruolo("ADMIN")));
-
-            // 2. Controlla e crea un Admin di test se la tabella è vuota
-            if (adminRepository.count() == 0) {
-                Admin admin = new Admin(
+            if (utenteRepository.count() == 0) {
+                Utente utente = new Utente(
                         "Mario",
                         "Rossi",
                         "admin@example.com",
-                        passwordEncoder.encode("password123"),
-                        ruoloAdmin
+                        passwordEncoder.encode("password123")
                 );
-                adminRepository.save(admin);
+                utenteRepository.save(utente);
                 System.out.println(">>> Utente Admin di test creato con successo! (email: admin@example.com, password: password123)");
             }
         };
