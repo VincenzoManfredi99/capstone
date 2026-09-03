@@ -15,6 +15,7 @@ import vincenzomanfredi.capstone.hotspot.repositories.HotspotRepository;
 import vincenzomanfredi.capstone.scena.entities.Scena;
 import vincenzomanfredi.capstone.scena.services.ScenaService;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -68,6 +69,18 @@ public class HotspotService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(orderBy));
         return this.hotspotRepository.findAll(pageable);
+    }
+
+    public List<Hotspot> findByScenaId(UUID scenaId) {
+        // Assicurati di chiamare il repository corrispondente
+        return this.hotspotRepository.findByScenaId(scenaId);
+    }
+
+    public List<Hotspot> getAllAsList(int page, int size, String orderBy) {
+        // Se usi la paginazione nel tuo service esistente, puoi fare:
+        return this.hotspotRepository.findAll();
+        // Oppure se vuoi mantenere la paginazione restituendo il contenuto:
+        // return this.hotspotRepository.findAll(PageRequest.of(page, size, Sort.by(orderBy))).getContent();
     }
 
     //Find by Id

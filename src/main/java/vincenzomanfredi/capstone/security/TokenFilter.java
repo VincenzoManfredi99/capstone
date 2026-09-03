@@ -8,7 +8,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import vincenzomanfredi.capstone.exceptions.Unauthorized;
 import vincenzomanfredi.capstone.utente.entities.Utente;
@@ -51,6 +50,12 @@ public class TokenFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return new AntPathMatcher().match("/auth/**", request.getServletPath());
+        String path = request.getServletPath();
+        String method = request.getMethod();
+        
+        boolean isAuthRoute = path.startsWith("/auth");
+        boolean isRegisterRoute = path.equals("/utenti") && method.equals("POST");
+
+        return isAuthRoute || isRegisterRoute;
     }
 }

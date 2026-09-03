@@ -1,6 +1,5 @@
 package vincenzomanfredi.capstone.hotspot.controllers;
 
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -37,10 +36,19 @@ public class HotspotController {
 
     //Get
     @GetMapping
-    public Page<Hotspot> getHotspot(@RequestParam(defaultValue = "0") int page,
-                                    @RequestParam(defaultValue = "10") int size,
-                                    @RequestParam(defaultValue = "id") String orderBy) {
-        return this.hotspotService.getAll(page, size, orderBy);
+    public List<Hotspot> getHotspot(
+            @RequestParam(required = false) UUID scenaId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String orderBy) {
+
+        if (scenaId != null) {
+            // Se viene passato il filtro, chiama il service che cerca per scena
+            return this.hotspotService.findByScenaId(scenaId);
+        } else {
+            // Altrimenti restituisce tutti (assicurati che il service restituisca una List o adatta di conseguenza)
+            return this.hotspotService.getAllAsList(page, size, orderBy);
+        }
     }
 
     //Get by Id

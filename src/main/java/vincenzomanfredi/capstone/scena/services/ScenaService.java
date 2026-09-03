@@ -1,11 +1,14 @@
 package vincenzomanfredi.capstone.scena.services;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import vincenzomanfredi.capstone.exceptions.NotFound;
 import vincenzomanfredi.capstone.sala.entities.Sala;
 import vincenzomanfredi.capstone.sala.services.SalaService;
@@ -13,6 +16,8 @@ import vincenzomanfredi.capstone.scena.entities.Scena;
 import vincenzomanfredi.capstone.scena.payloads.ScenaDTO;
 import vincenzomanfredi.capstone.scena.repositories.ScenaRepository;
 
+import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -20,10 +25,12 @@ import java.util.UUID;
 public class ScenaService {
     private final ScenaRepository scenaRepository;
     private final SalaService salaService;
+    private final Cloudinary cloudinary;
 
-    public ScenaService(ScenaRepository scenaRepository, SalaService salaService) {
+    public ScenaService(ScenaRepository scenaRepository, SalaService salaService, Cloudinary cloudinary) {
         this.scenaRepository = scenaRepository;
         this.salaService = salaService;
+        this.cloudinary = cloudinary;
     }
 
     //Save
@@ -38,6 +45,18 @@ public class ScenaService {
         Scena saved = this.scenaRepository.save(newScena);
         log.info("Scena salvata con successo nella sala: " + sala.getNome());
         return saved;
+    }
+
+
+    //Cloudinary
+    public Scena saveScenaConFile(MultipartFile file, UUID salaId) throws IOException {
+
+        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+
+        String fotoUrl = (String) uploadResult.get("url");
+
+        ScenaDTO payload = new ScenaDTO(fotoUrl, salaId);
+        return this.save(payload);
     }
 
     //Get All
