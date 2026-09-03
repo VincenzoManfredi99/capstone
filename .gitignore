@@ -31,3 +31,16 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+# Node modules e build del frontend (cartella museum)
+/museum/node_modules/
+/museum/dist/
+/museum/build/
+
+# File di configurazione locale o dipendenze del backend Java
+/capstone/target/
+.idea/
+*.iml
+.DS_Store
+.env
