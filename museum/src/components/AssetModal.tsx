@@ -30,7 +30,7 @@ export function AssetModal({
     setMessaggio(null);
 
     try {
-      // 1. Se l'utente ha caricato delle foto 2D
+      // Se l'utente ha caricato delle foto 2D
       if (fileFoto && fileFoto.length > 0) {
         for (const file of Array.from(fileFoto)) {
           const formData = new FormData();
@@ -42,7 +42,7 @@ export function AssetModal({
             `http://localhost:3001/opere/${operaId}/assets`,
             {
               method: "POST",
-              headers: { Authorization: `Bearer ` }, // Inserisci il token corretto
+              headers: { Authorization: `Bearer ${token}` },
               body: formData,
             },
           );
@@ -50,7 +50,7 @@ export function AssetModal({
         }
       }
 
-      // 2. Se l'utente ha caricato il file 3D (.glb)
+      // Se l'utente ha caricato il file 3D (.glb)
       if (file3D) {
         const formData = new FormData();
         formData.append("file", file3D);
