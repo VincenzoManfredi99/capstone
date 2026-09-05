@@ -55,7 +55,7 @@ public class AssetService {
         String urlFile;
         try {
 
-            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
 
             urlFile = uploadResult.get("secure_url").toString();
         } catch (IOException e) {

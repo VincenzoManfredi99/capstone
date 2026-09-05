@@ -64,10 +64,12 @@ function Scena() {
   const [showMovimentoModal, setShowMovimentoModal] = useState<boolean>(false);
   const [targetScenaId, setTargetScenaId] = useState<string>("");
 
+  // Stati per la creazione dell'Opera e dell'Audio
   const [showOperaModal, setShowOperaModal] = useState<boolean>(false);
   const [titoloOpera, setTitoloOpera] = useState<string>("");
   const [descrizioneOpera, setDescrizioneOpera] = useState<string>("");
-  const [urlAudioOpera, setUrlAudioOpera] = useState<string>("");
+  const [audioFile, setAudioFile] = useState<File | null>(null); // File audio locale
+  const [loadingAudio, setLoadingAudio] = useState<boolean>(false); // Spinner di caricamento
 
   const [showViewOperaModal, setShowViewOperaModal] = useState<boolean>(false);
   const [operaSelezionata, setOperaSelezionata] = useState<{
@@ -148,13 +150,9 @@ function Scena() {
           const hsId = hs.id || hs._id;
 
           const operaTrovata = listaOpere.find((op: any) => {
+            const rawId = op.hotspot_id || op.hotspotId || op.hotspot;
             const hId =
-              op.hotspot?.id ||
-              op.hotspot?._id ||
-              op.hotspot ||
-              op.hotspotId?.id ||
-              op.hotspotId?._id ||
-              op.hotspotId;
+              typeof rawId === "object" ? rawId?.id || rawId?._id : rawId;
 
             return String(hId) === String(hsId);
           });
@@ -285,6 +283,9 @@ function Scena() {
     }
 
     try {
+      setLoadingAudio(true);
+
+      // 1. Crea prima l'Hotspot
       const payloadHotspot = {
         tipo,
         pitch: tempCoords.pitch,
@@ -309,21 +310,26 @@ function Scena() {
       const hotspotCreato = await resHotspot.json();
       const hotspotIdFinal = hotspotCreato.id || hotspotCreato._id;
 
+      // 2. Se è un'opera, invia i dati (incluso l'eventuale file audio) al backend con FormData
       if (tipo === "OPERA") {
-        const payloadOpera = {
-          titolo: titoloOpera,
-          descrizione: descrizioneOpera,
-          url_audio: urlAudioOpera,
-          hotspotId: hotspotIdFinal,
-        };
+        const formDataOpera = new FormData();
+        formDataOpera.append("titolo", titoloOpera);
+        formDataOpera.append("descrizione", descrizioneOpera);
+        formDataOpera.append("hotspotId", hotspotIdFinal);
+
+        // Se l'utente ha selezionato un file audio, lo passiamo al backend
+        if (audioFile) {
+          formDataOpera.append("audioFile", audioFile);
+        }
 
         const resOpera = await fetch("http://localhost:3001/opere", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
+            // Nota: NON mettere "Content-Type": "application/json" qui,
+            // il browser lo imposta in automatico a multipart/form-data con il boundary corretto per i FormData
           },
-          body: JSON.stringify(payloadOpera),
+          body: formDataOpera,
         });
 
         if (!resOpera.ok) {
@@ -340,10 +346,12 @@ function Scena() {
       setTargetScenaId("");
       setTitoloOpera("");
       setDescrizioneOpera("");
-      setUrlAudioOpera("");
+      setAudioFile(null); // Puliamo lo stato del file audio
     } catch (err) {
       console.error("Errore di rete o di salvataggio:", err);
       alert("Si è verificato un errore durante il salvataggio.");
+    } finally {
+      setLoadingAudio(false);
     }
   };
 
@@ -524,8 +532,9 @@ function Scena() {
         setTitoloOpera={setTitoloOpera}
         descrizioneOpera={descrizioneOpera}
         setDescrizioneOpera={setDescrizioneOpera}
-        urlAudioOpera={urlAudioOpera}
-        setUrlAudioOpera={setUrlAudioOpera}
+        audioFile={audioFile}
+        setAudioFile={setAudioFile}
+        loadingAudio={loadingAudio}
         onSave={() => handleSalvaHotspot("OPERA")}
       />
 

@@ -29,40 +29,54 @@ export function AssetModal({
     setLoading(true);
     setMessaggio(null);
 
-    const formData = new FormData();
-    if (fileFoto) {
-      Array.from(fileFoto).forEach((file) => {
-        formData.append("file", file);
-        formData.append("tipoUrl", "FOTO_2D"); // <-- Modificato da "FOTO" a "FOTO_2D"
-        formData.append("operaId", operaId);
-      });
-    }
-    if (file3D) {
-      formData.append("file", file3D);
-      formData.append("tipoUrl", "MODELLO_3D"); // <-- Questo era già corretto
-      formData.append("operaId", operaId);
-    }
-
     try {
-      const res = await fetch(`http://localhost:3001/opere/${operaId}/assets`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
+      // 1. Se l'utente ha caricato delle foto 2D
+      if (fileFoto && fileFoto.length > 0) {
+        for (const file of Array.from(fileFoto)) {
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("tipoUrl", "FOTO_2D");
+          formData.append("operaId", operaId);
 
-      if (res.ok) {
-        setMessaggio("Asset caricati con successo!");
-        setTimeout(() => {
-          setMessaggio(null);
-          if (onSuccess) onSuccess();
-          onHide();
-        }, 1200);
-      } else {
-        setMessaggio("Errore durante il caricamento degli asset.");
+          const res = await fetch(
+            `http://localhost:3001/opere/${operaId}/assets`,
+            {
+              method: "POST",
+              headers: { Authorization: `Bearer ` }, // Inserisci il token corretto
+              body: formData,
+            },
+          );
+          if (!res.ok) throw new Error("Errore caricamento foto");
+        }
       }
+
+      // 2. Se l'utente ha caricato il file 3D (.glb)
+      if (file3D) {
+        const formData = new FormData();
+        formData.append("file", file3D);
+        formData.append("tipoUrl", "MODELLO_3D");
+        formData.append("operaId", operaId);
+
+        const res = await fetch(
+          `http://localhost:3001/opere/${operaId}/assets`,
+          {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+            body: formData,
+          },
+        );
+        if (!res.ok) throw new Error("Errore caricamento modello 3D");
+      }
+
+      setMessaggio("Asset caricati con successo!");
+      setTimeout(() => {
+        setMessaggio(null);
+        if (onSuccess) onSuccess();
+        onHide();
+      }, 1200);
     } catch (err) {
-      console.error("Errore di rete:", err);
-      setMessaggio("Errore di connessione al server.");
+      console.error("Errore di rete o salvataggio:", err);
+      setMessaggio("Errore durante il caricamento degli asset.");
     } finally {
       setLoading(false);
     }
